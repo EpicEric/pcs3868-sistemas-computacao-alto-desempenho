@@ -1,0 +1,9 @@
+*.o
+/.bash_history
+/.bash_logout
+/.bash_profile
+/.bashrc
+/.gitconfig
+/.python_history
+/.viminfo
+
