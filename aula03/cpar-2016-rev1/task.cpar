@@ -1,0 +1,18 @@
+#include <stdio.h>
+task spec tarefa1();
+task body tarefa1()
+{ 
+  printf("TESTE1\n");
+  fflush(stdout);
+}
+task spec tarefa2();
+task body tarefa2()
+{ printf("TESTE2\n");
+}
+main()
+{ 
+  create 1,tarefa1();
+  create 1,tarefa2();
+}
+
+

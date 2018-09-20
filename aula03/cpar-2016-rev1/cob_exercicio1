@@ -1,0 +1,266 @@
+
+void *ROT1() 
+{ 
+ int _cpar_id_thread_;
+insert_id_thread();
+int _id_thread_=get_id_thread_gl();
+
+  _cpar_arg_task_0_ *_cpar_arg_0_;
+
+  _cpar_arg_task_1_ *_cpar_arg_1_;
+
+  _cpar_arg_task_2_ *_cpar_arg_2_;
+
+  _cpar_arg_task_3_ *_cpar_arg_3_;
+
+  _cpar_arg_task_4_ *_cpar_arg_4_;
+
+  _cpar_arg_task_5_ *_cpar_arg_5_;
+
+	 
+   init_create_task(0,1);
+
+   sh_0=(shared_local_0 *) calloc(1,sizeof(shared_local_0));
+
+   _cpar_arg_0_=(_cpar_arg_task_0_ *) calloc(1,sizeof(_cpar_arg_task_0_ ));
+
+   for(_cpar_id_thread_=0;_cpar_id_thread_<1;_cpar_id_thread_++) {
+
+      _cpar_arg_0_[_cpar_id_thread_].id_thread=_cpar_id_thread_;
+
+      _cpar_arg_0_[_cpar_id_thread_].numthreads=1;
+
+      pthread_mutex_lock(&_cpar_mutex_create_thread_);
+
+      if (pthread_create(&_cpar_tid_[0][_cpar_id_thread_],NULL,tarefa1,(void *)&_cpar_arg_0_[_cpar_id_thread_])){
+
+        fprintf(stderr,"Cannot create thread ");
+
+      pthread_mutex_unlock(&_cpar_mutex_create_thread_);
+
+        exit(1);
+
+    } 
+
+      pthread_mutex_unlock(&_cpar_mutex_create_thread_);
+
+ }  
+
+      pthread_mutex_unlock(&_cpar_create_task_flag_[0]);
+
+      _cpar_task_wait_flag_[0]=0;
+
+	 
+   init_create_task(1,1);
+
+   sh_1=(shared_local_1 *) calloc(1,sizeof(shared_local_1));
+
+   _cpar_arg_1_=(_cpar_arg_task_1_ *) calloc(1,sizeof(_cpar_arg_task_1_ ));
+
+   for(_cpar_id_thread_=0;_cpar_id_thread_<1;_cpar_id_thread_++) {
+
+      _cpar_arg_1_[_cpar_id_thread_].id_thread=_cpar_id_thread_;
+
+      _cpar_arg_1_[_cpar_id_thread_].numthreads=1;
+
+      pthread_mutex_lock(&_cpar_mutex_create_thread_);
+
+      if (pthread_create(&_cpar_tid_[1][_cpar_id_thread_],NULL,tarefa2,(void *)&_cpar_arg_1_[_cpar_id_thread_])){
+
+        fprintf(stderr,"Cannot create thread ");
+
+      pthread_mutex_unlock(&_cpar_mutex_create_thread_);
+
+        exit(1);
+
+    } 
+
+      pthread_mutex_unlock(&_cpar_mutex_create_thread_);
+
+ }  
+
+      pthread_mutex_unlock(&_cpar_create_task_flag_[1]);
+
+      _cpar_task_wait_flag_[1]=0;
+
+	
+   wait_proc (0);    /* --- wait_proc() --- */
+
+	
+   wait_proc (1);    /* --- wait_proc() --- */
+
+	printf("\nseq2\n");
+	 
+   init_create_task(4,1);
+
+   sh_4=(shared_local_4 *) calloc(1,sizeof(shared_local_4));
+
+   _cpar_arg_4_=(_cpar_arg_task_4_ *) calloc(1,sizeof(_cpar_arg_task_4_ ));
+
+   for(_cpar_id_thread_=0;_cpar_id_thread_<1;_cpar_id_thread_++) {
+
+      _cpar_arg_4_[_cpar_id_thread_].id_thread=_cpar_id_thread_;
+
+      _cpar_arg_4_[_cpar_id_thread_].numthreads=1;
+
+      pthread_mutex_lock(&_cpar_mutex_create_thread_);
+
+      if (pthread_create(&_cpar_tid_[4][_cpar_id_thread_],NULL,tarefa5,(void *)&_cpar_arg_4_[_cpar_id_thread_])){
+
+        fprintf(stderr,"Cannot create thread ");
+
+      pthread_mutex_unlock(&_cpar_mutex_create_thread_);
+
+        exit(1);
+
+    } 
+
+      pthread_mutex_unlock(&_cpar_mutex_create_thread_);
+
+ }  
+
+      pthread_mutex_unlock(&_cpar_create_task_flag_[4]);
+
+      _cpar_task_wait_flag_[4]=0;
+
+	 
+   init_create_task(5,1);
+
+   sh_5=(shared_local_5 *) calloc(1,sizeof(shared_local_5));
+
+   _cpar_arg_5_=(_cpar_arg_task_5_ *) calloc(1,sizeof(_cpar_arg_task_5_ ));
+
+   for(_cpar_id_thread_=0;_cpar_id_thread_<1;_cpar_id_thread_++) {
+
+      _cpar_arg_5_[_cpar_id_thread_].id_thread=_cpar_id_thread_;
+
+      _cpar_arg_5_[_cpar_id_thread_].numthreads=1;
+
+      pthread_mutex_lock(&_cpar_mutex_create_thread_);
+
+      if (pthread_create(&_cpar_tid_[5][_cpar_id_thread_],NULL,tarefa6,(void *)&_cpar_arg_5_[_cpar_id_thread_])){
+
+        fprintf(stderr,"Cannot create thread ");
+
+      pthread_mutex_unlock(&_cpar_mutex_create_thread_);
+
+        exit(1);
+
+    } 
+
+      pthread_mutex_unlock(&_cpar_mutex_create_thread_);
+
+ }  
+
+      pthread_mutex_unlock(&_cpar_create_task_flag_[5]);
+
+      _cpar_task_wait_flag_[5]=0;
+
+ 
+wait_proc(0);
+
+wait_proc(1);
+
+wait_proc(4);
+
+wait_proc(5);
+
+}
+
+void *ROT2() 
+{
+ int _cpar_id_thread_;
+ insert_id_thread();
+int _id_thread_=get_id_thread_gl();
+
+  _cpar_arg_task_0_ *_cpar_arg_0_;
+
+  _cpar_arg_task_1_ *_cpar_arg_1_;
+
+  _cpar_arg_task_2_ *_cpar_arg_2_;
+
+  _cpar_arg_task_3_ *_cpar_arg_3_;
+
+  _cpar_arg_task_4_ *_cpar_arg_4_;
+
+  _cpar_arg_task_5_ *_cpar_arg_5_;
+
+	 
+   init_create_task(2,1);
+
+   sh_2=(shared_local_2 *) calloc(1,sizeof(shared_local_2));
+
+   _cpar_arg_2_=(_cpar_arg_task_2_ *) calloc(1,sizeof(_cpar_arg_task_2_ ));
+
+   for(_cpar_id_thread_=0;_cpar_id_thread_<1;_cpar_id_thread_++) {
+
+      _cpar_arg_2_[_cpar_id_thread_].id_thread=_cpar_id_thread_;
+
+      _cpar_arg_2_[_cpar_id_thread_].numthreads=1;
+
+      pthread_mutex_lock(&_cpar_mutex_create_thread_);
+
+      if (pthread_create(&_cpar_tid_[2][_cpar_id_thread_],NULL,tarefa3,(void *)&_cpar_arg_2_[_cpar_id_thread_])){
+
+        fprintf(stderr,"Cannot create thread ");
+
+      pthread_mutex_unlock(&_cpar_mutex_create_thread_);
+
+        exit(1);
+
+    } 
+
+      pthread_mutex_unlock(&_cpar_mutex_create_thread_);
+
+ }  
+
+      pthread_mutex_unlock(&_cpar_create_task_flag_[2]);
+
+      _cpar_task_wait_flag_[2]=0;
+
+	 
+   init_create_task(3,1);
+
+   sh_3=(shared_local_3 *) calloc(1,sizeof(shared_local_3));
+
+   _cpar_arg_3_=(_cpar_arg_task_3_ *) calloc(1,sizeof(_cpar_arg_task_3_ ));
+
+   for(_cpar_id_thread_=0;_cpar_id_thread_<1;_cpar_id_thread_++) {
+
+      _cpar_arg_3_[_cpar_id_thread_].id_thread=_cpar_id_thread_;
+
+      _cpar_arg_3_[_cpar_id_thread_].numthreads=1;
+
+      pthread_mutex_lock(&_cpar_mutex_create_thread_);
+
+      if (pthread_create(&_cpar_tid_[3][_cpar_id_thread_],NULL,tarefa4,(void *)&_cpar_arg_3_[_cpar_id_thread_])){
+
+        fprintf(stderr,"Cannot create thread ");
+
+      pthread_mutex_unlock(&_cpar_mutex_create_thread_);
+
+        exit(1);
+
+    } 
+
+      pthread_mutex_unlock(&_cpar_mutex_create_thread_);
+
+ }  
+
+      pthread_mutex_unlock(&_cpar_create_task_flag_[3]);
+
+      _cpar_task_wait_flag_[3]=0;
+
+	
+   wait_proc (2);    /* --- wait_proc() --- */
+
+	
+   wait_proc (3);    /* --- wait_proc() --- */
+
+	printf("\nseq3\n");
+ 
+wait_proc(2);
+
+wait_proc(3);
+
+}

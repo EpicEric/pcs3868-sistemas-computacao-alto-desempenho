@@ -1,0 +1,32 @@
+
+void *ROT1() 
+{ 
+ int _cpar_id_thread_;
+insert_id_thread();
+int _id_thread_=get_id_thread_gl();
+
+    printf("bloco1\n");
+    fflush(stdout);
+ 
+}
+
+void *ROT2() 
+{
+ int _cpar_id_thread_;
+ insert_id_thread();
+int _id_thread_=get_id_thread_gl();
+
+    printf("bloco2\n");
+    fflush(stdout);
+ 
+}
+
+void *ROT3() 
+{
+ int _cpar_id_thread_;
+ insert_id_thread();
+int _id_thread_=get_id_thread_gl();
+
+    printf("bloco3\n");
+ 
+}

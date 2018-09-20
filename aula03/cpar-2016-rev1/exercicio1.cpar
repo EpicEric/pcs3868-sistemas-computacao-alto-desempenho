@@ -1,0 +1,73 @@
+#include <stdio.h>
+task spec tarefa1();
+task spec tarefa2();
+task spec tarefa3();
+task spec tarefa4();
+task spec tarefa5();
+task spec tarefa6();
+
+task body tarefa1()
+{int i;
+ for(i=0;i<5000;i++)
+ {printf("%c",'1');
+  fflush(stdout);
+ }
+}
+task body tarefa2()
+{int i;
+ for(i=0;i<5000;i++)
+ {printf("%c",'2');
+  fflush(stdout);
+ }
+}
+task body tarefa3()
+{int i;
+ for(i=0;i<5000;i++)
+ {printf("%c",'3');
+  fflush(stdout);
+ }
+}
+task body tarefa4()
+{int i;
+ for(i=0;i<5000;i++)
+ {printf("%c",'4');
+  fflush(stdout);
+ }
+}
+task body tarefa5()
+{int i;
+ for(i=0;i<5000;i++)
+ {printf("%c",'5');
+  fflush(stdout);
+ }
+}
+task body tarefa6()
+{int i;
+ for(i=0;i<5000;i++)
+ {printf("%c",'6');
+  fflush(stdout);
+ }
+}
+main()
+{printf("INICIO TESTE\n");
+ fflush(stdout);
+ printf("\nseq1\n");
+ cobegin
+	create 1,tarefa1();
+	create 1,tarefa2();
+	wait_proc(tarefa1);
+	wait_proc(tarefa2);
+	printf("\nseq2\n");
+	create 1,tarefa5();
+	create 1,tarefa6();
+ also
+	create 1,tarefa3();
+	create 1,tarefa4();
+	wait_proc(tarefa3);
+	wait_proc(tarefa4);
+	printf("\nseq3\n");
+ coend
+ wait_all();
+ printf("\nFIM\n");
+ fflush(stdout);
+}
