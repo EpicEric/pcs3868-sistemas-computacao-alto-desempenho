@@ -1,0 +1,67 @@
+#include <stdio.h>
+
+shared int A[100][100], B[100][100], C[100][100], D[100][100], RES[100][100], X[100][100], Y[100][100];
+
+task spec tarefaAB();
+task spec tarefaCD();
+task spec tarefaRES();
+
+void inicializarMatrizes()
+{int i, j;
+ for(i=0;i<100;i++)
+  for(j=0;j<100;j++)
+  {A[i][j]=i+j;
+   B[i][j]=i+2*j;
+   C[i][j]=2*i+3*j;
+   D[i][j]=2*i+j;
+   X[i][j]=0;
+   Y[i][j]=0;
+  }
+}
+
+task body tarefaAB()
+{int i,j,k;
+printf("AB\n");
+ forall i=0 to 99{
+  for(j=0;j<=99;j++)
+   for(k=0;k<=99;k++)
+    X[i][j]=X[i][j]+A[i][k]*B[k][j];
+ }
+printf("Fim AB\n");
+}
+task body tarefaCD()
+{int i,j,k;
+printf("CD\n");
+ forall i=0 to 99{
+  for(j=0;j<=99;j++)
+   for(k=0;k<=99;k++)
+    Y[i][j]=Y[i][j]+C[i][k]*D[k][j];
+ }
+printf("Fim CD\n");
+}
+task body tarefaRES()
+{int i,j;
+ printf("RES\n");
+ forall i=0 to 99{
+  for(j=0;j<=99;j++)
+   RES[i][j]=X[i][j]+Y[i][j];
+ }
+}
+main()
+{int i;
+for(i=0;i<1000;i++){
+ inicializarMatrizes();
+  printf("INICIO TESTE\n");
+ fflush(stdout);
+	create 2,tarefaAB();
+	create 2,tarefaCD();
+	wait_proc(tarefaAB);
+	wait_proc(tarefaCD);
+	printf("\nSOMA\n");
+	create 4,tarefaRES();
+ wait_proc(tarefaRES);
+ printf("\nFIM\n");
+}
+ printf("RES[0][0]=%10d  RES[49][49]=%10d  RES[99][99]=%10d\n", RES[0][0], RES[49][49], RES[99][99]);
+ fflush(stdout);
+}
