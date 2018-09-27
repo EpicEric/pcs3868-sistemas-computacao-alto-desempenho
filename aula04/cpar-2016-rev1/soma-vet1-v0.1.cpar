@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include "mede_time.h"
+#define SIZE 200
+shared int a[2000];
+shared int soma;
+/*inicia matriz*/
+shared Semaph S;
+shared int nprocs;
+task spec init_vetor();
+task body init_vetor()
+  { 
+     int i;
+      forall i=0 to (SIZE-1) {  
+         a[i]=1.0;
+      }
+  }
+
+
+/*soma dos elementos*/
+task spec soma_elementos();
+task body soma_elementos()
+  {
+      int i, j, mi_id, step, min, max, soma_local;
+
+      forall i=1 to nprocs {
+         step = SIZE / nprocs;
+         soma_local = 0;
+         max = SIZE;
+         mi_id = get_mi_id();
+         min = step * mi_id;
+         if (mi_id != (nprocs-1))
+             max = min + step;
+         for (j = min; j < max; j++)
+             soma_local=soma_local+a[i];
+         lock(&S);
+         soma=soma+soma_local;
+         unlock(&S);
+      }
+  }
+ 
+main()
+{
+  printf ("Numero de processadores: ");
+  scanf("%d",&nprocs);
+  create_sem(&S,1);
+  create nprocs, init_vetor();
+  wait_all();
+  fflush(stdout);
+  create nprocs, soma_elementos();
+  wait_all();
+  printf("soma=%d \n",soma);
+}
+
+
+

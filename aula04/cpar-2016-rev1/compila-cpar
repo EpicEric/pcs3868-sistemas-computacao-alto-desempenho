@@ -1,0 +1,3 @@
+./ccpar-novo $1.cpar
+gcc -w -O4 -o $1 $1.c bib-pthreads.o -lpthread -lm 
+

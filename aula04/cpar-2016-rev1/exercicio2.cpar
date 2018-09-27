@@ -1,0 +1,50 @@
+#include <stdio.h>
+shared int x[2000], y[2000], a[2000], b[2000], c[2000];
+shared Semaph sem1, sem2;
+
+task spec tar1();
+task body tar1() {
+  int i;
+  for(i=0; i<1999; i++) {
+    a[i] = x[i] * 3;
+    unlock(&sem1);
+    unlock(&sem2);
+  }
+}
+
+task spec tar2();
+task body tar2() {
+  int i;
+  b[0] = 1;
+  for(i=1; i<2000; i++) {
+    lock(&sem1);
+    b[i] = y[i] + a[i-1];
+  }
+}
+
+task spec tar3();
+task body tar3() {
+  int i;
+  c[0] = 1;
+  for(i=1; i<2000; i++) {
+    lock(&sem2);
+    c[i]=a[i-1]*2;
+  }
+} 
+
+main()
+{
+  int nprocs, i;
+  for(i=0; i<2000; i++) {
+    x[i] = i;
+    y[i] = i+1;
+  }
+  create_sem(&sem1, 0);
+  create_sem(&sem2, 0);
+  create 1, tar1();
+  create 1, tar2();
+  create 1, tar3();
+  wait_all();
+  rem_sem(&sem1);
+}
+
