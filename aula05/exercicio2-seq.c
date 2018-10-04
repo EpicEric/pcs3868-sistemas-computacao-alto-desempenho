@@ -16,27 +16,27 @@ void init_matrix() {
 }
 
 int contar_ocorrencias(int valor) {
-  int i, j, ocorrencia_total;
-  ocorrencia_total = 0;
+  int i, j;
+  int ocorrencias = 0;
   for (i = 0; i < SIZE; i++) {
     for (j = 0; j < SIZE; j++) {
       if (A[i][j] == valor) {
-        ocorrencia_total++;
+        ocorrencias++;
       }
     }
   }
-  return ocorrencia_total;
+  return ocorrencias;
 }
 
 void main(int argc, char **argv) {
-  int valor, ocorrencia_total;
+  int valor, ocorrencias;
   TIMER_CLEAR;
   printf("Valor a ser encontrado: ");
   scanf("%d", &valor);
   TIMER_START;
   init_matrix();
-  ocorrencia_total = contar_ocorrencias(valor);
+  ocorrencias = contar_ocorrencias(valor);
   TIMER_STOP;
   printf("TEMPO [SIZE = %d]: %.7f\n", SIZE, TIMER_ELAPSED);
-  printf("TOTAL DE OCORRENCIAS: %d\n", ocorrencia_total);
+  printf("OCORRENCIAS: %d\n", ocorrencias);
 }
