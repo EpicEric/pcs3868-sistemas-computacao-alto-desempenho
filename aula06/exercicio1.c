@@ -45,19 +45,24 @@ void soma_matriz(int a[SIZE][SIZE], int b[SIZE][SIZE], int res[SIZE][SIZE]) {
 }
 
 void run() {
-  omp_set_num_threads(NTHREADS);
   #pragma omp parallel sections
   {
     #pragma omp section
     {
-      multiplicacao_matriz(A, B, AB);
+      #pragma omp parallel num_threads(NTHREADS) shared(A, B, AB)
+      {
+        multiplicacao_matriz(A, B, AB);
+      }
     }
     #pragma omp section
     {
-      multiplicacao_matriz(C, D, CD);
+      #pragma omp parallel num_threads(NTHREADS) shared(C, D, CD)
+      {
+        multiplicacao_matriz(C, D, CD);
+      }
     }
   }
-  #pragma omp parallel
+  #pragma omp parallel num_threads(NTHREADS) shared(AB, CD, R)
   {
     soma_matriz(AB, CD, R);
   }
@@ -65,6 +70,7 @@ void run() {
 
 int main(int argc, char **argv) {
   TIMER_CLEAR;
+  omp_set_num_threads(NTHREADS);
   init_matrizes();
   TIMER_START;
   run();
