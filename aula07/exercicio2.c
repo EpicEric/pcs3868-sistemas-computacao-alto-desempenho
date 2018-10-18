@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <sys/time.h>
+#include "mede_time.h"
+
 int i;
 int n;
 int v[1000];
@@ -51,6 +54,7 @@ void merge_sort(int p, int r, int v[]) {
 
 void main() {
   int i;
+  TIMER_CLEAR;
   printf("n:");
   scanf("%d", &n);
   printf("n=%d\n", n); 
@@ -59,6 +63,7 @@ void main() {
     printf("%d ", v[i]);
   }
   printf("\n");
+  TIMER_START;
   #pragma omp parallel num_threads(4)
   {
     #pragma omp single
@@ -66,9 +71,10 @@ void main() {
       merge_sort(0, n, v);
     }
   }
-  for (i = 0; i < n; i++) {
-    printf("%d ", v[i]);
+  TIMER_STOP;
+  for (i=0;i<n;i++) {
+    printf("%d ",v[i]);
   }
-  printf("\n");
+  printf("\n\nTEMPO: %.7f\n", TIMER_ELAPSED);
 }
 
