@@ -32,7 +32,7 @@ int main()
         seq_vet[k]=malloc(SEQ_SIZE*sizeof(char));
     while(!feof(f)){
 	fgets(seq_vet[i], SEQ_SIZE, f);
-        printf("seq_vet[%d] =  %s\n ",i,seq_vet[i]);
+        /*printf("seq_vet[%d] =  %s\n ",i,seq_vet[i]);*/
         i=i+1;
    }
         
@@ -43,7 +43,7 @@ int main()
    igual = FALSE;
    for (i=0;i<n_seq;i++){	  
         buff=seq_vet[i];
-        printf("i=%d buff %s\n ",i,buff);
+        /*printf("i=%d buff %s\n ",i,buff);*/
         for (j = 0; j < SEQ_SIZE-2; j++){
 		if (sequencia[j] != buff[j]){
 			break;

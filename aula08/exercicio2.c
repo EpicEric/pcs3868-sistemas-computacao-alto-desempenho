@@ -11,7 +11,6 @@ int main() {
   int i_achou;
   int i = 0;
   int j;
-  int thread_num;
   int igual;
   char *buff;
   char sequencia[SEQ_SIZE];
@@ -46,13 +45,15 @@ int main() {
 
   #pragma omp parallel num_threads(NTHREADS) shared(igual, i_achou)
   {
-    int i_min, i_max;
+    int i_min, i_max, igual_local;
     int thread_num = omp_get_thread_num();
     i_min = ((int) (n_seq * 1.0 / NTHREADS) * thread_num);
     i_max = ((int) (n_seq * 1.0 / NTHREADS) * (thread_num + 1));
     printf("t[%d], [%d:%d]\n", thread_num, i_min, i_max);
     for (i = i_min; i < i_max; i++) {
-      if (igual == TRUE) {
+      #pragma omp atomic read
+      igual_local = igual;
+      if (igual_local == TRUE) {
         break;
       }
       buff = seq_vet[i];
@@ -82,3 +83,4 @@ int main() {
   fclose(f);
   return 0;
 }
+
