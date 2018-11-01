@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
     if (rank == 0) {
         for (i = 1; i < n_nos; i++) {
             MPI_Recv(&achou_parcial_no, 1, MPI_INT, i, 40, MPI_COMM_WORLD, &status);
-            MPI_Recv(indice_achou + sizeof(int) * achou_parcial, achou_parcial_no, MPI_INT, i, 50, MPI_COMM_WORLD, &status);
+            MPI_Recv(indice_achou + achou_parcial, achou_parcial_no, MPI_INT, i, 50, MPI_COMM_WORLD, &status);
             achou_parcial += achou_parcial_no;
         }
         if (achou_parcial != 0) {
@@ -101,8 +101,8 @@ int main(int argc, char **argv) {
         MPI_Send(indice_achou, achou_parcial, MPI_INT, 0, 50, MPI_COMM_WORLD);
     }
 
-    MPI_Finalize();
     free(indice_achou);
     free(seq_vet);
+    MPI_Finalize();
     return 0;
 }
