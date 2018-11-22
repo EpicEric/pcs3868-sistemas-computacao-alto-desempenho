@@ -10,11 +10,11 @@ int main(int argc, char **argv) {
     int i, n, n_nos, rank, search_value;
     int vetor[SIZE];
     int *ocorrencias;
-	MPI_Status status;
+    MPI_Status status;
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &n_nos);
-	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    srand(time(NULL) + rank); // Deixar valores aleatorios diferentes entre cada thread
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    srand(time(NULL) + 60 * rank); // Deixar valores aleatorios diferentes entre cada thread
     for (i = 0; i < SIZE; i++) {
         vetor[i] = rand() % MAX_VALUE;
     }

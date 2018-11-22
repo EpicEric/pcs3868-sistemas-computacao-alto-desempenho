@@ -13,9 +13,10 @@ void main()
       for (j=0;j<500;j++) {
         A[i][j]=i+j;
         B[i][j]=2*i-j;
+        X[i][j]=0;
       }
     for (i=0;i<500;i++) 
-      for(k=1;k<500;k++)
+      for(k=0;k<500;k++)
           for (j=0;j<500;j++)
             X[i][j]=X[i][j]+A[i][k]*B[k][j];
     for (i=0;i<500;i++) 
