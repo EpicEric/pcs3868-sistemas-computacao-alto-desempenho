@@ -1,10 +1,3 @@
-/*
- *  * EXEMPLO de uso de MPI_Reduce (comunicacao coletiva).
- *   * Soma dos elementos de uma matriz.
- *    * Resultado em soma (elementos iguais a 1. soma=1 000 000)
- *     * Numero de elementos do vetor: multiplo do numero de processos 
- *      */
-
 #include <mpi.h>
 #include <stdio.h>
 #include <stdlib.h>
