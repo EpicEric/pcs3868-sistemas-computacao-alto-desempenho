@@ -3,78 +3,77 @@
 #include <omp.h>
 
 #define NCORES 2
-#define SIZE 10
+#define SIZE 100
 
 void processo0(int n_nos, int rank) {
     int i, j, k;
-    double A[SIZE][SIZE], B[SIZE][SIZE], X[SIZE][SIZE];
+    double A[SIZE][SIZE], B[SIZE][SIZE], X_i[SIZE];
     for (i = 0; i < SIZE; i++) {
         for (j = 0; j < SIZE; j++) {
-            A[i][j] = 0.1;
+            A[i][j] = (double) (i - j);
             B[i][j] = (double) (i + j);
-            X[i][j] = 0;
         }
     }
     for (i = 0; i < SIZE; i++) {
-        #pragma omp parallel shared(X) private(j, k)
+        #pragma omp parallel shared(A, B, X_i) private(j, k)
         {
             #pragma omp for
             for (j = 0; j < SIZE; j++) {
+                X_i[j] = 0;
                 for (k = 0; k < SIZE; k++) {
-                    X[i][j] += A[i][k] * B[k][j];
+                    X_i[j] += A[i][k] * B[k][j];
                 }
             }
         }
-        MPI_Send(X[i], SIZE, MPI_DOUBLE, 2, rank * SIZE + i, MPI_COMM_WORLD);
+        MPI_Send(X_i, SIZE, MPI_DOUBLE, 2, rank * SIZE + i, MPI_COMM_WORLD);
     }
-    printf("[rank %d] 3", rank);
 }
 
 void processo1(int n_nos, int rank) {
     int i, j, k;
-    double C[SIZE][SIZE], D[SIZE][SIZE], Y[SIZE][SIZE];
+    double C[SIZE][SIZE], D[SIZE][SIZE], Y_i[SIZE];
     for (i = 0; i < SIZE; i++) {
         for (j = 0; j < SIZE; j++) {
-            C[i][j] = 2;
+            C[i][j] = (double) (i - 2 * j);
             D[i][j] = (double) (2 * i + j);
-            Y[i][j] = 0;
         }
     }
     for (i = 0; i < SIZE; i++) {
-        #pragma omp parallel shared(Y) private(j, k)
+        #pragma omp parallel shared(C, D, Y_i) private(j, k)
         {
             #pragma omp for
             for (j = 0; j < SIZE; j++) {
+                Y_i[j] = 0;
                 for (k = 0; k < SIZE; k++) {
-                    Y[i][j] += C[i][k] * D[k][j];
+                    Y_i[j] += C[i][k] * D[k][j];
                 }
             }
         }
-        MPI_Send(Y[i], SIZE, MPI_DOUBLE, 2, rank * SIZE + i, MPI_COMM_WORLD);
+        MPI_Send(Y_i, SIZE, MPI_DOUBLE, 2, rank * SIZE + i, MPI_COMM_WORLD);
     }
 }
 
 void processo2(int n_nos, int rank) {
     int i, j;
     MPI_Status status;
-    double X[SIZE][SIZE], Y[SIZE][SIZE], Z[SIZE][SIZE];
+    double X_i[SIZE], Y_i[SIZE], Z[SIZE][SIZE];
     for (i = 0; i < SIZE; i++) {
         for (j = 0; j < SIZE; j++) {
             Z[i][j] = 0;
         }
     }
     for (i = 0; i < SIZE; i++) {
-        MPI_Recv(X[i], SIZE, MPI_DOUBLE, 0, 0 * SIZE + i, MPI_COMM_WORLD, &status);
-        MPI_Recv(Y[i], SIZE, MPI_DOUBLE, 1, 1 * SIZE + i, MPI_COMM_WORLD, &status);
-        #pragma omp parallel shared(Z) private(j)
+        MPI_Recv(X_i, SIZE, MPI_DOUBLE, 0, 0 * SIZE + i, MPI_COMM_WORLD, &status);
+        MPI_Recv(Y_i, SIZE, MPI_DOUBLE, 1, 1 * SIZE + i, MPI_COMM_WORLD, &status);
+        #pragma omp parallel shared(X_i, Y_i, Z) private(j)
         {
             #pragma omp for
             for (j = 0; j < SIZE; j++) {
-                Z[i][j] = X[i][j] + Y[i][j];
+                Z[i][j] = X_i[j] + Y_i[j];
             }
         }
     }
-    // printf("[rank %d] Z[0][0] = %f  Z[100][200] = %f  Z[900][900] = %f", Z[0][0], Z[100][200], Z[900][900]);
+    printf("[rank %d] Z[0][0] = %f  Z[100][200] = %f  Z[900][900] = %f", Z[0][0], Z[20][10], Z[99][99]);
 }
 
 int main(int argc, char **argv) {
