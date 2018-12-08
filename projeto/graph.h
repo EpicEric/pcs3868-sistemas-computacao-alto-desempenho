@@ -1,6 +1,7 @@
 struct Graph {
     int **adj_matrix;
     int V;
+    int *visited;
 };
 
 struct Graph* createGraph(int V);

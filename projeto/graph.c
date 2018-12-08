@@ -8,6 +8,7 @@ struct Graph *createGraph(int V)
 
 	struct Graph *graph = (struct Graph *)malloc(sizeof(struct Graph));
 	graph->V = V;
+	graph->visited = malloc(V * sizeof(int));
 	graph->adj_matrix = malloc(V * sizeof(int *));
 	for (i = 0; i < V; i++)
 	{
@@ -52,11 +53,12 @@ int getWeight(struct Graph *graph, int src, int dest)
 	return graph->adj_matrix[src][dest];
 }
 
-int main()
+void visitNode(struct Graph *graph, int node, int src)
 {
-	struct Graph *graph = createGraph(6);
-	addEdge(graph, 0, 1, 5);
-	addEdge(graph, 0, 2, 2);
-	addEdge(graph, 0, 3, 8);
-	printGraph(graph);
+	graph->visited[node] = src;
+}
+
+int whoVisitNode(struct Graph *graph, int node)
+{
+	return graph->visited[node];
 }
