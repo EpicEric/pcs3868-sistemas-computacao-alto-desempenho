@@ -3,16 +3,21 @@
 #include "queue.h"
 
 //Código adaptado de https://www.programiz.com/dsa/graph-bfs
+#define MIN_LENGTH 100
 
-struct queue *createQueue()
+Queue *createQueue(int length)
 {
-	struct queue *q = malloc(sizeof(struct queue));
+	Queue *q = malloc(sizeof(Queue));
+	if (length <= 100)
+		length = 100;
+	q->length = length;
+	q->items = malloc(length*sizeof(int));
 	q->front = -1;
 	q->rear = -1;
 	return q;
 }
 
-int isEmpty(struct queue *q)
+int isEmpty(Queue *q)
 {
 	if (q->rear == -1)
 		return 1;
@@ -20,9 +25,9 @@ int isEmpty(struct queue *q)
 		return 0;
 }
 
-void enqueue(struct queue *q, int value)
+void enqueue(Queue *q, int value)
 {
-	if (q->rear == SIZE - 1)
+	if (q->rear == q->length - 1)
 		printf("\nQueue is Full!!");
 	else
 	{
@@ -33,7 +38,7 @@ void enqueue(struct queue *q, int value)
 	}
 }
 
-int dequeue(struct queue *q)
+int dequeue(Queue *q)
 {
 	int item;
 	if (isEmpty(q))
@@ -52,7 +57,7 @@ int dequeue(struct queue *q)
 	return item;
 }
 
-void printQueue(struct queue *q)
+void printQueue(Queue *q)
 {
 	int i = q->front;
 

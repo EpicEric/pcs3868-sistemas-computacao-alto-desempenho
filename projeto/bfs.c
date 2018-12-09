@@ -2,10 +2,10 @@
 #include "graph.h"
 #include "queue.h"
 
-void bfs(struct Graph *graph, int startNode)
+void bfs(Graph *graph, int startNode)
 {
 	int i;
-	struct queue *q = createQueue();
+	Queue *q = createQueue(0);
 	enqueue(q, startNode);
 
 	while (!isEmpty(q))
@@ -30,7 +30,7 @@ void bfs(struct Graph *graph, int startNode)
 
 int main()
 {
-	struct Graph *graph = createGraph(6);
+	Graph *graph = createGraph(6);
 	addEdge(graph, 0, 1, 1);
 	addEdge(graph, 0, 2, 1);
 	addEdge(graph, 0, 3, 1);
