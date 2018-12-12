@@ -29,73 +29,73 @@ void printPath(Graph *graph, State *startsideNode, State *endsideNode)
 	return;
 }
 
+int searchIteration(Graph* graph, heap *h, State **visitedNodes, State **foundNodes) {
+	int i;
+	State *currentNode, *iterNode;
+	// Get element currently with less cost from heap
+	heap_delmin(h, (void **) &currentNode, (void **) &currentNode);
+	// If cost is not higher, then we can iterate this node
+	if (currentNode->cost <= visitedNodes[currentNode->node]->cost)
+	{
+		visitedNodes[currentNode->node] = currentNode;
+		printf("DEBUG: Visited %d\n", currentNode->node);
+		// If node is on the other side, we found a path
+		if (foundNodes[currentNode->node]) {
+			printf("DEBUG: Completed path.\n");
+			printPath(graph, foundNodes[currentNode->node], currentNode);
+			return 1;
+		}
+		// If node is not on other side, find all neighbors and add to heap
+		for (i = 0; i < graph->V; i++) {
+			if (i != currentNode->node &&
+					graph->adj_matrix[currentNode->node][i] > 0 &&
+					!(visitedNodes[i]))
+			{
+				// Add to list of visited nodes on left side
+				iterNode = visitNode(graph, visitedNodes, i, currentNode->node);
+				// 
+				heap_insert(h, iterNode, iterNode);
+			}
+		}
+	// Generated node is useless; remove from memory
+	} else {
+		free(currentNode);
+	}
+	return 0;
+}
+
 int bidirectionalSearch(Graph *graph, int startNode, int endNode)
 {
 	int i;
-	State *currentNode, *iterNode;
+	State *node;
 	heap *h_start = malloc(sizeof(heap));
 	heap *h_end = malloc(sizeof(heap));
 	heap_create(h_start, graph->V, (int (*)(void*, void*)) compareStates);
 	heap_create(h_end, graph->V, (int (*)(void*, void*)) compareStates);
 
-	currentNode = malloc(sizeof(State));
-	currentNode->node = startNode;
-	currentNode->cost = 0;
-	currentNode->prev = startNode;
-	heap_insert(h_start, currentNode, currentNode);
-	graph->visited_from_start[currentNode->node] = currentNode;
+	node = malloc(sizeof(State));
+	node->node = startNode;
+	node->cost = 0;
+	node->prev = startNode;
+	heap_insert(h_start, node, node);
+	graph->visited_from_start[node->node] = node;
 
-	currentNode = malloc(sizeof(State));
-	currentNode->node = endNode;
-	currentNode->cost = 0;
-	currentNode->prev = endNode;
-	heap_insert(h_end, currentNode, currentNode);
-	graph->visited_from_end[currentNode->node] = currentNode;
+	node = malloc(sizeof(State));
+	node->node = endNode;
+	node->cost = 0;
+	node->prev = endNode;
+	heap_insert(h_end, node, node);
+	graph->visited_from_end[node->node] = node;
 
+	// Iterate while there are still unexplored nodes on both sides
 	while (heap_size(h_start) && heap_size(h_end))
 	{
 		// Iterate on start
-		heap_delmin(h_start, (void**) &currentNode, (void**) &currentNode);
-		if (currentNode->cost <= graph->visited_from_start[currentNode->node]->cost)
-		{
-			graph->visited_from_start[currentNode->node] = currentNode;
-			printf("DEBUG START: Visited %d\n", currentNode->node);
-			if (graph->visited_from_end[currentNode->node]) {
-				printf("DEBUG START: Completed path.\n");
-				printPath(graph, currentNode, graph->visited_from_end[currentNode->node]);
-				return 0;
-			}
-			for (i = 0; i < graph->V; i++) {
-				if (i != currentNode->node &&
-				    graph->adj_matrix[currentNode->node][i] > 0 &&
-						!(graph->visited_from_start[i]))
-				{
-					iterNode = visitNodeFromStart(graph, i, currentNode->node);
-					heap_insert(h_start, iterNode, iterNode);
-				}
-			}
-		}
+		i = searchIteration(graph, h_start, graph->visited_from_start, graph->visited_from_end);
+		if (i) return 0;
 		// Iterate on end
-		heap_delmin(h_end, (void **) &currentNode, (void **) &currentNode);
-		if (currentNode->cost <= graph->visited_from_end[currentNode->node]->cost)
-		{
-			graph->visited_from_end[currentNode->node] = currentNode;
-			printf("DEBUG END: Visited %d\n", currentNode->node);
-			if (graph->visited_from_start[currentNode->node]) {
-				printf("DEBUG END: Completed path.\n");
-				printPath(graph, graph->visited_from_start[currentNode->node], currentNode);
-				return 0;
-			}
-			for (i = 0; i < graph->V; i++) {
-				if (i != currentNode->node &&
-				    graph->adj_matrix[currentNode->node][i] > 0 &&
-						!(graph->visited_from_end[i]))
-				{
-					iterNode = visitNodeFromEnd(graph, i, currentNode->node);
-					heap_insert(h_end, iterNode, iterNode);
-				}
-			}
-		}
+		i = searchIteration(graph, h_end, graph->visited_from_end, graph->visited_from_start);
+		if (i) return 0;
 	}
 	return -1;
 }

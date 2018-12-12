@@ -56,22 +56,17 @@ int getWeight(Graph *graph, int src, int dest)
 	return graph->adj_matrix[src][dest];
 }
 
-State *visitNodeFromStart(Graph *graph, int node, int src)
+State *visitNode(Graph *graph, State **visitList, int node, int src)
 {
 	State *state = malloc(sizeof(State));
 	state->node = node;
 	state->prev = src;
-	state->cost = graph->visited_from_start[src]->cost + getWeight(graph, src, node);
-	graph->visited_from_start[node] = state;
-	return state;
-}
-
-State *visitNodeFromEnd(Graph *graph, int node, int src)
-{
-	State *state = malloc(sizeof(State));
-	state->node = node;
-	state->prev = src;
-	state->cost = graph->visited_from_end[src]->cost + getWeight(graph, src, node);
-	graph->visited_from_end[node] = state;
+	state->cost = visitList[src]->cost + getWeight(graph, src, node);
+	if (!visitList[node] || visitList[node]->cost > state->cost) {
+		visitList[node] = state;
+	} else {
+		free(state);
+		state = visitList[node];
+	}
 	return state;
 }

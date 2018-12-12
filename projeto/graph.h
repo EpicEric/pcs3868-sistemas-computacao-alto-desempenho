@@ -12,5 +12,4 @@ void printGraph(Graph *graph);
 void addEdge(Graph* graph, int src, int dest, int weight);
 void removeEdge(Graph* graph, int src, int dest);
 int getWeight(Graph* graph, int src, int dest);
-State *visitNodeFromStart(Graph *graph, int node, int src);
-State *visitNodeFromEnd(Graph *graph, int node, int src);
+State *visitNode(Graph *graph, State **visitList, int node, int src);
