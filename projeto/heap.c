@@ -34,6 +34,7 @@
 #include <sys/mman.h>
 #include <assert.h>
 #include <strings.h>
+#include <string.h>
 #include "heap.h"
 
 // Helpful Macros
