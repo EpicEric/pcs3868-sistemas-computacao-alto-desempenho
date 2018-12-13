@@ -6,8 +6,8 @@
 void printPath(Graph *graph, State *startsideNode, State *endsideNode)
 {
 	int start, end, i;
-	int *array = malloc(graph->V * sizeof(int));
-	start = graph->V / 2;
+	int *array = malloc(2 * graph->V * sizeof(int));
+	start = graph->V;
 	end = start;
 	do {
 		array[start--] = startsideNode->node;
