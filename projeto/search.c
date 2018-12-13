@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "graph.h"
 #include "heap.h"
+#include "board.h"
 
 void printPath(Graph *graph, State *startsideNode, State *endsideNode)
 {
@@ -102,16 +102,14 @@ int bidirectionalSearch(Graph *graph, int startNode, int endNode)
 
 int main()
 {
+	int gaps[] = {0};
 	int path;
-	Graph *graph = createGraph(6);
-	addEdge(graph, 0, 1, 1);
-	addEdge(graph, 0, 5, 1);
-	addEdge(graph, 1, 4, 1);
-	addEdge(graph, 2, 3, 1);
-	addEdge(graph, 3, 4, 1);
+	Graph *graph = createBoard(3);
+	createObstacleInRow(graph, 3, 1, gaps, 1);
 	printGraph(graph);
+	printf("\n");
 
-	path = bidirectionalSearch(graph, 0, 3);
+	path = bidirectionalSearch(graph, 0, 8);
 	if (!path)
 	{
 		printf("Path found!\n");
