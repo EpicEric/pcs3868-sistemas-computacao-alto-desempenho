@@ -103,14 +103,14 @@ int bidirectionalSearch(Graph *graph, int startNode, int endNode)
 
 int main()
 {
-	int gaps[] = {0};
+	int gaps[] = {1};
 	int path;
-	Graph *graph = createBoard(3);
-	createObstacleInRow(graph, 3, 1, gaps, 1);
+	Graph *graph = createBoard(5);
+	createObstacleInRow(graph, 5, 1, gaps, 1);
 	printGraph(graph);
 	printf("\n");
 
-	path = bidirectionalSearch(graph, 0, 8);
+	path = bidirectionalSearch(graph, 0, 20);
 	if (!path)
 	{
 		printf("Path found!\n");
