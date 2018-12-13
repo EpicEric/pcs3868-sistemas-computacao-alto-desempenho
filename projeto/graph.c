@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "graph.h"
+#include <omp.h>
 
 Graph *createGraph(int V)
 {
@@ -63,7 +64,10 @@ State *visitNode(Graph *graph, State **visitList, int node, int src)
 	state->prev = src;
 	state->cost = visitList[src]->cost + getWeight(graph, src, node);
 	if (!visitList[node] || visitList[node]->cost > state->cost) {
-		visitList[node] = state;
+		#pragma omp critical
+    	{
+			visitList[node] = state;
+		}
 	} else {
 		free(state);
 		state = visitList[node];

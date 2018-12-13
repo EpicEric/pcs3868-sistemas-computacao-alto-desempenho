@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "heap.h"
 #include "board.h"
+#include <omp.h>
 
 void printPath(Graph *graph, State *startsideNode, State *endsideNode)
 {
@@ -44,8 +45,11 @@ int searchIteration(Graph* graph, heap *h, State **visitedNodes, State **foundNo
 	// If cost is not higher, then we can iterate this node
 	if (currentNode->cost <= visitedNodes[currentNode->node]->cost)
 	{
-		visitedNodes[currentNode->node] = currentNode;
-		printf("%s DEBUG: Visited %d\n", debugPrefix, currentNode->node);
+		#pragma omp critical
+		{
+			visitedNodes[currentNode->node] = currentNode;
+		}
+		printf("%s DEBUG: Visited %d. Thread: %d\n", debugPrefix, currentNode->node, omp_get_thread_num());
 		// If node is on the other side, we found a path
 		if (foundNodes[currentNode->node]) {
 			printf("%s DEBUG: Completed path.\n", debugPrefix);
@@ -98,29 +102,44 @@ int bidirectionalSearch(Graph *graph, int startNode, int endNode)
 	heap_insert(h_end, node, node);
 	graph->visited_from_end[endNode] = node;
 
-	// Iterate while there are still unexplored nodes on both sides
-	while (heap_size(h_start) && heap_size(h_end))
+    #pragma omp parallel num_threads(4) shared(graph, i)
 	{
-		// Iterate on start
-		i = searchIteration(graph, h_start, graph->visited_from_start, graph->visited_from_end);
-		if (i) return 0;
-		// Iterate on end
-		i = searchIteration(graph, h_end, graph->visited_from_end, graph->visited_from_start);
-		if (i) return 0;
+	// Iterate while there are still unexplored nodes on both sides
+		#pragma omp single
+		{
+			#pragma omp task 
+			{
+				while (heap_size(h_start))
+				{
+					// Iterate on start
+					i = searchIteration(graph, h_start, graph->visited_from_start, graph->visited_from_end);
+					if (i) break;
+				}
+			}
+			#pragma omp task 
+			{
+				while (heap_size(h_end))
+				{
+					// Iterate on end
+					i = searchIteration(graph, h_end, graph->visited_from_end, graph->visited_from_start);
+					if (i) break;
+				}
+			}
+		}
 	}
+	if (i) return 0;
 	return -1;
 }
 
 int main()
 {
-	int gaps[] = {1};
+	int gaps[] = {95};
 	int path;
-	Graph *graph = createBoard(5);
-	createObstacleInRow(graph, 5, 1, gaps, 1);
-	printGraph(graph);
+	Graph *graph = createBoard(100);
+	createObstacleInRow(graph, 100, 1, gaps, 1);
 	printf("\n");
 
-	path = bidirectionalSearch(graph, 0, 20);
+	path = bidirectionalSearch(graph, 0, 9999);
 	if (!path)
 	{
 		printf("Path found!\n");
