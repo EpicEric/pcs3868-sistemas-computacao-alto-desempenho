@@ -6,8 +6,8 @@
 void printPath(Graph *graph, State *startsideNode, State *endsideNode)
 {
 	int start, end, i;
-	int *array = malloc(2 * graph->V * sizeof(int));
-	start = graph->V;
+	int *array = malloc(graph->V * sizeof(int));
+	start = graph->V / 2;
 	end = start;
 	do {
 		array[start--] = startsideNode->node;
@@ -33,17 +33,27 @@ void printPath(Graph *graph, State *startsideNode, State *endsideNode)
 int searchIteration(Graph* graph, heap *h, State **visitedNodes, State **foundNodes) {
 	int i;
 	State *currentNode, *iterNode;
+	char *debugPrefix;
+	if (graph->visited_from_start == visitedNodes) {
+		debugPrefix = "START";
+	} else {
+		debugPrefix = "END";
+	}
 	// Get element currently with less cost from heap
 	heap_delmin(h, (void **) &currentNode, (void **) &currentNode);
 	// If cost is not higher, then we can iterate this node
 	if (currentNode->cost <= visitedNodes[currentNode->node]->cost)
 	{
 		visitedNodes[currentNode->node] = currentNode;
-		printf("DEBUG: Visited %d\n", currentNode->node);
+		printf("%s DEBUG: Visited %d\n", debugPrefix, currentNode->node);
 		// If node is on the other side, we found a path
 		if (foundNodes[currentNode->node]) {
-			printf("DEBUG: Completed path.\n");
-			printPath(graph, foundNodes[currentNode->node], currentNode);
+			printf("%s DEBUG: Completed path.\n", debugPrefix);
+			if (graph->visited_from_start == visitedNodes) {
+				printPath(graph, currentNode, foundNodes[currentNode->node]);
+			} else {
+				printPath(graph, foundNodes[currentNode->node], currentNode);
+			}
 			return 1;
 		}
 		// If node is not on other side, find all neighbors and add to heap
@@ -54,7 +64,7 @@ int searchIteration(Graph* graph, heap *h, State **visitedNodes, State **foundNo
 			{
 				// Add to list of visited nodes on left side
 				iterNode = visitNode(graph, visitedNodes, i, currentNode->node);
-				// 
+				// Insert in heap to iterate later
 				heap_insert(h, iterNode, iterNode);
 			}
 		}
@@ -79,14 +89,14 @@ int bidirectionalSearch(Graph *graph, int startNode, int endNode)
 	node->cost = 0;
 	node->prev = startNode;
 	heap_insert(h_start, node, node);
-	graph->visited_from_start[node->node] = node;
+	graph->visited_from_start[startNode] = node;
 
 	node = malloc(sizeof(State));
 	node->node = endNode;
 	node->cost = 0;
 	node->prev = endNode;
 	heap_insert(h_end, node, node);
-	graph->visited_from_end[node->node] = node;
+	graph->visited_from_end[endNode] = node;
 
 	// Iterate while there are still unexplored nodes on both sides
 	while (heap_size(h_start) && heap_size(h_end))
