@@ -4,7 +4,6 @@
 #include "board.h"
 
 #define DEBUG 0
-#define min(x, y) ((x < y) ? x : y)
 
 int *pathArray = NULL;
 int pathStart = 0;
@@ -27,7 +26,7 @@ void buildPath(Graph *graph, State *startsideNode, State *endsideNode)
 	pathArray[pathEnd] = endsideNode->node;
 }
 
-int searchIteration(Graph* graph, heap *h, State **visitedNodes, State **foundNodes) {
+void searchIteration(Graph* graph, heap *h, State **visitedNodes, State **foundNodes) {
 	int i, cost;
 	State *currentNode, *iterNode;
 	char *debugPrefix;
@@ -39,10 +38,15 @@ int searchIteration(Graph* graph, heap *h, State **visitedNodes, State **foundNo
 	// Get element currently with less cost from heap
 	heap_delmin(h, (void **) &currentNode, (void **) &currentNode);
 	// If cost is not higher, then we can iterate this node
-	cost = visitedNodes[currentNode->node]->cost;
-	if (currentNode->cost <= cost)
-	{
+	iterNode = visitedNodes[currentNode->node];
+	if (currentNode->cost <= iterNode->cost) {
 		visitedNodes[currentNode->node] = currentNode;
+		// Remove old node from memory
+		if (iterNode != currentNode) free(iterNode);
+		iterNode = NULL;
+	}
+	if (!iterNode)
+	{
 		if (DEBUG) printf("%s DEBUG: Visited %d\n", debugPrefix, currentNode->node);
 		// If node is on the other side, we found a path
 		if (foundNodes[currentNode->node]) {
@@ -52,7 +56,7 @@ int searchIteration(Graph* graph, heap *h, State **visitedNodes, State **foundNo
 			} else {
 				buildPath(graph, foundNodes[currentNode->node], currentNode);
 			}
-			return 1;
+			return;
 		}
 		// If node is not on other side, find all neighbors and add to heap
 		for (i = 0; i < graph->V; i++) {
@@ -70,7 +74,6 @@ int searchIteration(Graph* graph, heap *h, State **visitedNodes, State **foundNo
 	} else {
 		free(currentNode);
 	}
-	return 0;
 }
 
 void bidirectionalSearch(Graph *graph, int startNode, int endNode)
@@ -100,9 +103,11 @@ void bidirectionalSearch(Graph *graph, int startNode, int endNode)
 	while (heap_size(h_start) || heap_size(h_end))
 	{
 		// Iterate on start
-		if (searchIteration(graph, h_start, graph->visited_from_start, graph->visited_from_end)) return;
+		searchIteration(graph, h_start, graph->visited_from_start, graph->visited_from_end);
+		if (pathArray) return;
 		// Iterate on end
-		if (searchIteration(graph, h_end, graph->visited_from_end, graph->visited_from_start)) return;
+		searchIteration(graph, h_end, graph->visited_from_end, graph->visited_from_start);
+		if (pathArray) return;
 	}
 }
 

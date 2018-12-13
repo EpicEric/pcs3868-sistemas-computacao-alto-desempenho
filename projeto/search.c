@@ -40,8 +40,8 @@ void buildPath(Graph *graph, State *startsideNode, State *endsideNode)
 	pathArray[pathEnd] = endsideNode->node;
 }
 
-int searchIteration(Graph* graph, heap *h, State **visitedNodes, State **foundNodes, int thread_num) {
-	int i, cost;
+void searchIteration(Graph* graph, heap *h, State **visitedNodes, State **foundNodes, int thread_num) {
+	int i;
 	State *currentNode, *iterNode;
 	char *debugPrefix;
 	if (graph->visited_from_start == visitedNodes) {
@@ -54,13 +54,20 @@ int searchIteration(Graph* graph, heap *h, State **visitedNodes, State **foundNo
 	{
 		heap_delmin(h, (void **) &currentNode, (void **) &currentNode);
 	}
+	iterNode = NULL;
 	// If cost is not higher, then we can iterate this node
-	#pragma omp atomic read
-	cost = visitedNodes[currentNode->node]->cost;
-	if (currentNode->cost <= cost)
+	#pragma omp critical
 	{
-		#pragma omp atomic write
-		visitedNodes[currentNode->node] = currentNode;
+		iterNode = visitedNodes[currentNode->node];
+		if (currentNode->cost <= iterNode->cost) {
+			visitedNodes[currentNode->node] = currentNode;
+			// Remove old node from memory
+			if (iterNode != currentNode) free(iterNode);
+			iterNode = NULL;
+		}
+	}
+	if (!iterNode)
+	{
 		if (DEBUG) printf("%s DEBUG: Visited %d. Thread: %d\n", debugPrefix, currentNode->node, thread_num);
 		// If node is on the other side, we found a path
 		if (foundNodes[currentNode->node]) {
@@ -70,7 +77,7 @@ int searchIteration(Graph* graph, heap *h, State **visitedNodes, State **foundNo
 			} else {
 				buildPath(graph, foundNodes[currentNode->node], currentNode);
 			}
-			return 1;
+			return;
 		}
 		// If node is not on other side, find all neighbors and add to heap
 		for (i = 0; i < graph->V; i++) {
@@ -91,12 +98,11 @@ int searchIteration(Graph* graph, heap *h, State **visitedNodes, State **foundNo
 	} else {
 		free(currentNode);
 	}
-	return 0;
 }
 
 void bidirectionalSearch(Graph *graph, int startNode, int endNode)
 {
-	int size, result, i, maxThreads;
+	int size, maxThreads;
 	State *node;
 	heap *h_start = malloc(sizeof(heap));
 	heap *h_end = malloc(sizeof(heap));
@@ -128,26 +134,24 @@ void bidirectionalSearch(Graph *graph, int startNode, int endNode)
 			while (1) {
 				size = heap_size(h_start);
 				if (!size) break;
-				result = 0;
 				maxThreads = min(size, NTHREADS >> 1);
-				#pragma omp parallel num_threads(maxThreads) shared(result)
+				#pragma omp parallel num_threads(maxThreads)
 				{
-					result += searchIteration(graph, h_start, graph->visited_from_start, graph->visited_from_end, omp_get_thread_num());
+					searchIteration(graph, h_start, graph->visited_from_start, graph->visited_from_end, omp_get_thread_num());
 				}
-				if (result || pathArray) break;
+				if (pathArray) break;
 			}
 		} else {
 			// Iterate on end
 			while (1) {
 				size = heap_size(h_end);
 				if (!size) break;
-				result = 0;
 				maxThreads = min(size, NTHREADS - (NTHREADS >> 1));
-				#pragma omp parallel num_threads(maxThreads) shared(result)
+				#pragma omp parallel num_threads(maxThreads)
 				{
-					result += searchIteration(graph, h_end, graph->visited_from_end, graph->visited_from_start, omp_get_thread_num() + (NTHREADS >> 1));
+					searchIteration(graph, h_end, graph->visited_from_end, graph->visited_from_start, omp_get_thread_num() + (NTHREADS >> 1));
 				}
-				if (result || pathArray) break;
+				if (pathArray) break;
 			}
 		}
 	}
