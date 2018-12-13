@@ -26,6 +26,7 @@ void printPath(Graph *graph, State *startsideNode, State *endsideNode)
 		}
 	}
 	printf("\n");
+	free(array);
 	return;
 }
 
