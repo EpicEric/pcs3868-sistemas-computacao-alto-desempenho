@@ -6,7 +6,16 @@ Repositório para os trabalhos da disciplina PCS3868 de @epiceric e @mateusnakaj
 
 ```bash
 docker build -t epiceric/hpc .
-docker run -ti -v $PWD:/root/src epiceric/hpc
+docker run -ti -v $PWD:/root epiceric/hpc
+```
+
+### OpenMP
+
+Exemplo:
+
+```bash
+gcc -fopenmp -o exercicio exercicio.c
+./exercicio
 ```
 
 ### MPI
